@@ -132,10 +132,12 @@ void USPHeroComponent::OnSetDestinationReleased()
 void USPHeroComponent::OnAttackInputStarted()
 {
 	UE_LOG(LogTemp, Log, TEXT("Attack Started Decal"));
-	//캐릭터가 바라보는 방향으로 Decal
+	//캐릭터가 바라보는 방향으로 각도 60도 가량으로 Debug Draw 그리기
+	Owner->DisplayAttackRange();
 }
 
 void USPHeroComponent::OnAttackInputReleased()
 {
 	UE_LOG(LogTemp, Log, TEXT("Attack!"));
+	Owner->Attack();
 }

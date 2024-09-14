@@ -13,5 +13,11 @@ UCLASS()
 class PROJECTSP_API USPCharacterStat : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
+
+public:
+
+	float HP;
+	float Attack;
+	float AngleOfAttack;
 	
 };

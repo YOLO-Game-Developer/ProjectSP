@@ -3,6 +3,8 @@
 
 #include "Character/SPCharacterPlayer.h"
 #include "Character/SPHeroComponent.h"
+#include "Character/SPStatComponent.h"
+#include "Character/SPSkillComponent.h"
 #include "Player/SPPlayerController.h"
 
 #include "Camera/CameraComponent.h"
@@ -14,6 +16,8 @@
 ASPCharacterPlayer::ASPCharacterPlayer()
 {
 	SPHeroComponent = CreateDefaultSubobject<USPHeroComponent>(TEXT("InputComponent"));
+	Stat = CreateDefaultSubobject<USPStatComponent>(TEXT("StatComponent"));
+	Skill = CreateDefaultSubobject<USPSkillComponent>(TEXT("SkillComponent"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
 
@@ -55,4 +59,19 @@ void ASPCharacterPlayer::BeginPlay()
 
 	//Enhanced 등록 
 	SPHeroComponent->InitInputMappingContext();
+	Stat->InitStat(100.f, 20.f, 60.f); //임시로 지정 게임 데이터로 변경 예정
+}
+
+void ASPCharacterPlayer::Attack()
+{
+	if (Skill == nullptr) return;
+
+	Skill->Attack();
+}
+
+void ASPCharacterPlayer::DisplayAttackRange()
+{
+	if (Skill == nullptr) return;
+
+	Skill->DisplayAttackRange();
 }
