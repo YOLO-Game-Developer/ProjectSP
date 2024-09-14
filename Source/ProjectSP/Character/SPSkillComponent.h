@@ -19,4 +19,8 @@ public:
 	void Attack(); //어차피 공격을 늘리더라도 나중에 늘릴 예정
 
 	void DisplayAttackRange();
+
+protected:
+
+	void DrawDebugCircleArcFanWithDirection(UWorld* World, FVector Center, FVector Direction, float Radius, float StartAngle, float EndAngle, int32 Segments, FColor Color, float Thickness = 1.0f, bool bPersistentLines = false, float LifeTime = -1.0f);
 };
