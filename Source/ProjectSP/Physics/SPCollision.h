@@ -1,0 +1,1 @@
+#define CPROFILE_SPCAPSULE TEXT("SPCapsule")
