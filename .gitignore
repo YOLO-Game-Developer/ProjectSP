@@ -72,7 +72,8 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-Content/__ExternalActors__
-Content/Collections
-Content/LevelPrototyping
-Content/StarterContent
+Content/__ExternalActors__/*
+Content/Collections/*
+Content/LevelPrototyping/*
+Content/StarterContent/*
+Platforms/HoloLens/Config/*
