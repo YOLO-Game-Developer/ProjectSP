@@ -26,6 +26,13 @@ ASPCharacterPlayer::ASPCharacterPlayer()
 		GetMesh()->SetSkeletalMesh(SkeletalMeshRef.Object);
 	}
 
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimClassRef(TEXT("/Game/Animation/ABP_SPAnimInstance.ABP_SPAnimInstance_C"));
+
+	if (AnimClassRef.Class)
+	{
+		GetMesh()->SetAnimInstanceClass(AnimClassRef.Class);
+	}
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->bUsePawnControlRotation = false; //QuaterView는 회전하지 않는다.
