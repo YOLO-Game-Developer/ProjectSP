@@ -6,6 +6,10 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 USPSkillComponent::USPSkillComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -15,6 +19,7 @@ USPSkillComponent::USPSkillComponent(const FObjectInitializer& ObjectInitializer
 	{
 		SkillDecalClass = SkillDecalRef.Class;
 	}
+
 }
 
 void USPSkillComponent::BeginPlay()
@@ -33,10 +38,71 @@ void USPSkillComponent::BeginPlay()
 	
 }
 
+void USPSkillComponent::CheckAttackCollision()
+{
+	//Overlap
+	ACharacter* Character = GetPawn<ACharacter>();
+
+	if (Character)
+	{
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		TArray<AActor*> IgnoreActors;
+		TArray<AActor*> OutActors;
+
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+		IgnoreActors.Add(Character);
+
+		FVector Location = Character->GetActorLocation();
+
+		bool Result = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Location, 100.f, ObjectTypes, nullptr, IgnoreActors, OutActors);
+		UE_LOG(LogTemp, Log, TEXT("1"));
+		if (Result)
+		{
+			UE_LOG(LogTemp, Log, TEXT("2"));
+			for (AActor* Actor : OutActors)
+			{
+				//충돌 체크
+				if (IsHitByAttack(Character, Actor))
+				{
+					//데미지를 입힌다.
+				}
+			}
+		}
+	}
+}
+
+bool USPSkillComponent::IsHitByAttack(AActor* CurrentActor, AActor* OtherActor)
+{
+
+
+	return false;
+}
+
+void USPSkillComponent::OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	ACharacter* Character = GetPawn<ACharacter>();
+	if (Character)
+	{
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	}
+}
+
 void USPSkillComponent::Attack()
 {
 	//실제 여기서 공격을 수행한다.
+	ACharacter* Character = GetPawn<ACharacter>();
+	if (Character)
+	{
+		UAnimInstance* AnimInstance = Cast<UAnimInstance>(Character->GetMesh()->GetAnimInstance());
 
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(SkillMontage, 1.f);
+			AnimInstance->OnMontageEnded.AddDynamic(this, &USPSkillComponent::OnSkillMontageEnded);
+		}
+
+		CheckAttackCollision();
+	}
 	SkillDecalActor->SetActorHiddenInGame(true);
 }
 
@@ -45,6 +111,8 @@ void USPSkillComponent::DisplayAttackRange()
 	ACharacter* Character = GetPawn<ACharacter>();
 	if (Character)
 	{
+
+		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 		FVector Location = Character->GetActorLocation();
 
 		Location.Z -= 50.f;

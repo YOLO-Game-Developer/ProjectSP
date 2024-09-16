@@ -26,13 +26,26 @@ public:
 
 protected:
 
+	void CheckAttackCollision();
+	bool IsHitByAttack(AActor* CurrentActor, AActor *OtherActor);
+
+
+	UFUNCTION()
+	void OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+protected:
+
 	void DrawDebugCircleArcFanWithDirection(UWorld* World, FVector Center, FVector Direction, float Radius, float StartAngle, float EndAngle, int32 Segments, FColor Color, float Thickness = 1.0f, bool bPersistentLines = false, float LifeTime = -1.0f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
 	TSubclassOf<class AActor> SkillDecalClass;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
 	TObjectPtr<class AActor> SkillDecalActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
+	TObjectPtr<class UAnimMontage> SkillMontage;
+
 
 };
