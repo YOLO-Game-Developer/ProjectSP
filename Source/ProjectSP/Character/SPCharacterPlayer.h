@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Character/SPCharacterBase.h"
+#include "Interfaces/SPGetStatInterface.h"
 #include "SPCharacterPlayer.generated.h"
 
 UCLASS()
-class PROJECTSP_API ASPCharacterPlayer : public ASPCharacterBase
+class PROJECTSP_API ASPCharacterPlayer : public ASPCharacterBase, public ISPGetStatInterface
 {
 	GENERATED_BODY()
 
@@ -17,6 +18,13 @@ public:
 
 	void Attack();
 	void DisplayAttackRange();
+
+	FORCEINLINE void SetAttack(bool InAttack) { this->bIsAttacking = InAttack; }
+	FORCEINLINE bool GetAttack() { return bIsAttacking; }
+	virtual class USPStatComponent* GetStat();
+
+	bool IsPlayMontage(class UAnimMontage* InMontage);
+
 protected:
 
 	// Called to bind functionality to input
@@ -24,6 +32,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 
+	UFUNCTION()
+	void OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Input", Meta = (AllowPrivateAccess = "true"))
@@ -44,5 +54,9 @@ protected:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	TObjectPtr<class ASPPlayerController> PC;
+
+protected:
+
+	uint8 bIsAttacking : 1;
 
 };

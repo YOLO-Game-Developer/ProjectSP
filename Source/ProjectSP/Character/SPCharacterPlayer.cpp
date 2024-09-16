@@ -12,8 +12,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
-ASPCharacterPlayer::ASPCharacterPlayer()
+ASPCharacterPlayer::ASPCharacterPlayer() : bIsAttacking(false)
 {
 	SPHeroComponent = CreateDefaultSubobject<USPHeroComponent>(TEXT("InputComponent"));
 	Stat = CreateDefaultSubobject<USPStatComponent>(TEXT("StatComponent"));
@@ -60,6 +61,12 @@ void ASPCharacterPlayer::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 }
 
+void ASPCharacterPlayer::OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	bIsAttacking = false;
+}
+
 void ASPCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -74,11 +81,37 @@ void ASPCharacterPlayer::Attack()
 	if (Skill == nullptr) return;
 
 	Skill->Attack();
+
+	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AnimInstance->OnMontageEnded.IsBound() == false)
+	{
+		AnimInstance->OnMontageEnded.AddDynamic(this, &ASPCharacterPlayer::OnSkillMontageEnded);
+	}
+
 }
 
 void ASPCharacterPlayer::DisplayAttackRange()
 {
 	if (Skill == nullptr) return;
 
+	bIsAttacking = true;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	Skill->DisplayAttackRange();
+}
+
+USPStatComponent* ASPCharacterPlayer::GetStat()
+{
+	// TODO: insert return statement here
+	return Stat;
+}
+
+bool ASPCharacterPlayer::IsPlayMontage(UAnimMontage* InMontage)
+{
+	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+
+	if (AnimInstance)
+	{
+		return AnimInstance->Montage_IsPlaying(InMontage);
+	}
+	return false;
 }

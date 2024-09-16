@@ -4,8 +4,9 @@
 #include "Character/SPCharacterBase.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Interfaces/SPGetStatInterface.h"
 #include "Physics/SPCollision.h"
+#include "Character/SPStatComponent.h"
 // Sets default values
 ASPCharacterBase::ASPCharacterBase()
 {
@@ -32,6 +33,31 @@ ASPCharacterBase::ASPCharacterBase()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.0f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+}
+
+float ASPCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	ISPGetStatInterface* Interface = Cast<ISPGetStatInterface>(this);
+
+	if (Interface)
+	{
+		USPStatComponent *Stat = Interface->GetStat();
+		
+		float HP = Stat->GetHP();
+
+		UE_LOG(LogTemp, Log, TEXT("Damage %lf HP %lf"), FinalDamage, HP);
+
+		if (Stat->GetHP() <= 0.f)
+		{
+			//Á×À½.
+			return 0.f;
+		}
+		Stat->SetHP(HP - FinalDamage);
+	}
+	//float State¸¦ °¡Á®¿È 
+	return FinalDamage;
 }
 
 void ASPCharacterBase::BeginPlay()

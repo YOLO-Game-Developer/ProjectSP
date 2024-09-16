@@ -2,16 +2,16 @@
 
 
 #include "Character/SPSkillComponent.h"
-#include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Character/SPCharacterPlayer.h"
+#include "Engine/DamageEvents.h" 
 
-USPSkillComponent::USPSkillComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+USPSkillComponent::USPSkillComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer), MinDegree(-30.f), MaxDegree(30.f)
 {
 	static ConstructorHelpers::FClassFinder<AActor> SkillDecalRef(TEXT("/Game/Blueprints/BP_SPSkillPlane.BP_SPSkillPlane_C"));
 
@@ -55,50 +55,63 @@ void USPSkillComponent::CheckAttackCollision()
 		FVector Location = Character->GetActorLocation();
 
 		bool Result = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Location, 100.f, ObjectTypes, nullptr, IgnoreActors, OutActors);
-		UE_LOG(LogTemp, Log, TEXT("1"));
 		if (Result)
 		{
-			UE_LOG(LogTemp, Log, TEXT("2"));
 			for (AActor* Actor : OutActors)
 			{
 				//충돌 체크
 				if (IsHitByAttack(Character, Actor))
 				{
 					//데미지를 입힌다.
+
+					UE_LOG(LogTemp, Log, TEXT("Take Damage"));
+
+					FDamageEvent DamageEvent;
+
+					Actor->TakeDamage(20.f, DamageEvent, Character->GetController(), Character);
 				}
 			}
 		}
 	}
 }
 
+
 bool USPSkillComponent::IsHitByAttack(AActor* CurrentActor, AActor* OtherActor)
 {
+	FVector Origin = CurrentActor->GetActorLocation();
+	FVector Dest = OtherActor->GetActorLocation();
 
+	Origin.Z = 0;
+	Dest.Z = 0;
+	
+	FVector ForwardVector = CurrentActor->GetActorForwardVector(); // 현재 Actor의 바라보는 방향
+	FVector ToTarget = (Dest - Origin).GetSafeNormal(); // 타겟 방향 정규화
 
-	return false;
-}
+	float DotResult = FVector::DotProduct(ForwardVector, ToTarget); //내적
 
-void USPSkillComponent::OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	ACharacter* Character = GetPawn<ACharacter>();
-	if (Character)
-	{
-		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-	}
+	float Radian = FMath::Acos(DotResult); //내적에 대해서 Acos을 해주면 라디안 값 나옴
+
+	// 라디안을 각도로 변환
+	float Angle = FMath::RadiansToDegrees(Radian); //라디안을 Degree로 바꿔주면
+	
+	bool IsHit = MinDegree <= Angle && Angle <= MaxDegree;
+
+	return IsHit; //해당 값이 사이에 들어가는지 히트 판정을 수행한다
 }
 
 void USPSkillComponent::Attack()
 {
 	//실제 여기서 공격을 수행한다.
-	ACharacter* Character = GetPawn<ACharacter>();
+	ASPCharacterPlayer* Character = GetPawn<ASPCharacterPlayer>();
 	if (Character)
 	{
+		if (Character->IsPlayMontage(SkillMontage)) return;
+
 		UAnimInstance* AnimInstance = Cast<UAnimInstance>(Character->GetMesh()->GetAnimInstance());
 
 		if (AnimInstance)
 		{
 			AnimInstance->Montage_Play(SkillMontage, 1.f);
-			AnimInstance->OnMontageEnded.AddDynamic(this, &USPSkillComponent::OnSkillMontageEnded);
 		}
 
 		CheckAttackCollision();
@@ -108,11 +121,11 @@ void USPSkillComponent::Attack()
 
 void USPSkillComponent::DisplayAttackRange()
 {
-	ACharacter* Character = GetPawn<ACharacter>();
+	ASPCharacterPlayer* Character = GetPawn<ASPCharacterPlayer>();
 	if (Character)
 	{
+		if (Character->IsPlayMontage(SkillMontage)) return;
 
-		Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 		FVector Location = Character->GetActorLocation();
 
 		Location.Z -= 50.f;

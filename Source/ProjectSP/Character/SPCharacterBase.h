@@ -15,6 +15,7 @@ public:
 	// Sets default values for this character's properties
 	ASPCharacterBase();
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

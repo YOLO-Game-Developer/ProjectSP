@@ -19,6 +19,7 @@ public:
 
 	void InitStat(float InHP, float InAttack, float InRadiusOfAttack);
 
+	void SetHP(float InHP) { HP = InHP; }
 	float GetHP() { return HP; }
 	float GetMaxHP() { return MaxHP; }
 	float GetAttack() { return Attack; }

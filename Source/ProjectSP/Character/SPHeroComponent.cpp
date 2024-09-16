@@ -86,6 +86,7 @@ void USPHeroComponent::OnMoveInputStarted()
 {
 	if (PC == nullptr) return;
 	if (Owner == nullptr) return;
+	if (Owner->GetAttack()) return;
 
 	PC->StopMovement(); //시작할 때 기존 움직임을 멈추고,
 	
@@ -95,7 +96,8 @@ void USPHeroComponent::OnMoveInputStarted()
 void USPHeroComponent::OnSetDestinationTriggered()
 {
 	if (PC == nullptr || Owner == nullptr) return;
-	
+	if (Owner->GetAttack()) return;
+
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
 	FHitResult HitResult;
@@ -120,6 +122,7 @@ void USPHeroComponent::OnSetDestinationTriggered()
 void USPHeroComponent::OnSetDestinationReleased()
 {
 	if (PC == nullptr) return;
+	if (Owner->GetAttack()) return;
 
 	if (FollowTime <= ShortPressThreshold)
 	{
@@ -131,13 +134,11 @@ void USPHeroComponent::OnSetDestinationReleased()
 
 void USPHeroComponent::OnAttackInputStarted()
 {
-	UE_LOG(LogTemp, Log, TEXT("Attack Started Decal"));
 	//캐릭터가 바라보는 방향으로 각도 60도 가량으로 Debug Draw 그리기
 	Owner->DisplayAttackRange();
 }
 
 void USPHeroComponent::OnAttackInputReleased()
 {
-	UE_LOG(LogTemp, Log, TEXT("Attack!"));
 	Owner->Attack();
 }

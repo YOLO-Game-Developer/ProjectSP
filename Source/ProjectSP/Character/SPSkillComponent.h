@@ -29,10 +29,6 @@ protected:
 	void CheckAttackCollision();
 	bool IsHitByAttack(AActor* CurrentActor, AActor *OtherActor);
 
-
-	UFUNCTION()
-	void OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
 protected:
 
 	void DrawDebugCircleArcFanWithDirection(UWorld* World, FVector Center, FVector Direction, float Radius, float StartAngle, float EndAngle, int32 Segments, FColor Color, float Thickness = 1.0f, bool bPersistentLines = false, float LifeTime = -1.0f);
@@ -47,5 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
 	TObjectPtr<class UAnimMontage> SkillMontage;
 
+private:
+
+	float MinDegree;
+	float MaxDegree;
 
 };
