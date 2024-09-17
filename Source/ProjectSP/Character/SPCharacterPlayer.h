@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Character/SPCharacterBase.h"
-#include "Interfaces/SPGetStatInterface.h"
 #include "SPCharacterPlayer.generated.h"
 
 UCLASS()
-class PROJECTSP_API ASPCharacterPlayer : public ASPCharacterBase, public ISPGetStatInterface
+class PROJECTSP_API ASPCharacterPlayer : public ASPCharacterBase
 {
 	GENERATED_BODY()
 
@@ -21,7 +20,6 @@ public:
 
 	FORCEINLINE void SetAttack(bool InAttack) { this->bIsAttacking = InAttack; }
 	FORCEINLINE bool GetAttack() { return bIsAttacking; }
-	virtual class USPStatComponent* GetStat();
 
 	bool IsPlayMontage(class UAnimMontage* InMontage);
 
@@ -38,9 +36,6 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Input", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USPHeroComponent> SPHeroComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USPStatComponent> Stat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USPSkillComponent> Skill;

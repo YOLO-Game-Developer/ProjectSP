@@ -4,18 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "Character/SPCharacterBase.h"
-#include "Interfaces/SPGetStatInterface.h"
 #include "SPCharacterNonPlayer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTSP_API ASPCharacterNonPlayer : public ASPCharacterBase, public ISPGetStatInterface
+class PROJECTSP_API ASPCharacterNonPlayer : public ASPCharacterBase
 {
 	GENERATED_BODY()
 	
 public:
-	virtual class USPStatComponent* GetStat() override;
+	ASPCharacterNonPlayer();
 
+	virtual void BeginPlay() override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AI)
+	TObjectPtr<class UAIPerceptionComponent> AIPerception;
+
+protected:
+
+	UFUNCTION()
+	void PerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 };

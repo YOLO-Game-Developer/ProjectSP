@@ -7,6 +7,7 @@
 #include "Components/DecalComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "Character/SPStatComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Character/SPCharacterPlayer.h"
 #include "Engine/DamageEvents.h" 
@@ -41,7 +42,7 @@ void USPSkillComponent::BeginPlay()
 void USPSkillComponent::CheckAttackCollision()
 {
 	//Overlap
-	ACharacter* Character = GetPawn<ACharacter>();
+	ASPCharacterPlayer* Character = GetPawn<ASPCharacterPlayer>();
 
 	if (Character)
 	{
@@ -54,6 +55,7 @@ void USPSkillComponent::CheckAttackCollision()
 
 		FVector Location = Character->GetActorLocation();
 
+		float Damage = Character->GetStat()->GetAttack();;
 		bool Result = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Location, 100.f, ObjectTypes, nullptr, IgnoreActors, OutActors);
 		if (Result)
 		{
@@ -63,12 +65,9 @@ void USPSkillComponent::CheckAttackCollision()
 				if (IsHitByAttack(Character, Actor))
 				{
 					//데미지를 입힌다.
-
-					UE_LOG(LogTemp, Log, TEXT("Take Damage"));
-
 					FDamageEvent DamageEvent;
 
-					Actor->TakeDamage(20.f, DamageEvent, Character->GetController(), Character);
+					Actor->TakeDamage(Damage, DamageEvent, Character->GetController(), Character);
 				}
 			}
 		}

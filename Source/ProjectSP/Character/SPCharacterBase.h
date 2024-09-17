@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/SPGetStatInterface.h"
 #include "SPCharacterBase.generated.h"
 
 UCLASS()
-class PROJECTSP_API ASPCharacterBase : public ACharacter
+class PROJECTSP_API ASPCharacterBase : public ACharacter , public ISPGetStatInterface
 {
 	GENERATED_BODY()
 
@@ -16,7 +17,12 @@ public:
 	ASPCharacterBase();
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual class USPStatComponent* GetStat();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USPStatComponent> Stat;
 };

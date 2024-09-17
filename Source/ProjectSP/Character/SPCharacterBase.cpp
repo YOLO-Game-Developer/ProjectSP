@@ -33,6 +33,8 @@ ASPCharacterBase::ASPCharacterBase()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -90.f), FRotator(0.0f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+
+	Stat = CreateDefaultSubobject<USPStatComponent>(TEXT("StatComponent"));
 }
 
 float ASPCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -43,21 +45,26 @@ float ASPCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 
 	if (Interface)
 	{
-		USPStatComponent *Stat = Interface->GetStat();
+		USPStatComponent *TmpStat = Interface->GetStat();
 		
-		float HP = Stat->GetHP();
+		float HP = TmpStat->GetHP();
 
 		UE_LOG(LogTemp, Log, TEXT("Damage %lf HP %lf"), FinalDamage, HP);
 
-		if (Stat->GetHP() <= 0.f)
+		if (TmpStat->GetHP() <= 0.f)
 		{
 			//Á×À½.
 			return 0.f;
 		}
-		Stat->SetHP(HP - FinalDamage);
+		TmpStat->SetHP(HP - FinalDamage);
 	}
 	//float State¸¦ °¡Á®¿È 
 	return FinalDamage;
+}
+
+USPStatComponent* ASPCharacterBase::GetStat()
+{
+	return Stat;
 }
 
 void ASPCharacterBase::BeginPlay()
