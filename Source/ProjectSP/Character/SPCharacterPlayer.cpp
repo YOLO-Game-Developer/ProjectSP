@@ -17,7 +17,6 @@
 ASPCharacterPlayer::ASPCharacterPlayer() : bIsAttacking(false)
 {
 	SPHeroComponent = CreateDefaultSubobject<USPHeroComponent>(TEXT("InputComponent"));
-	Skill = CreateDefaultSubobject<USPSkillComponent>(TEXT("SkillComponent"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
 
@@ -96,15 +95,4 @@ void ASPCharacterPlayer::DisplayAttackRange()
 	bIsAttacking = true;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	Skill->DisplayAttackRange();
-}
-
-bool ASPCharacterPlayer::IsPlayMontage(UAnimMontage* InMontage)
-{
-	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
-
-	if (AnimInstance)
-	{
-		return AnimInstance->Montage_IsPlaying(InMontage);
-	}
-	return false;
 }

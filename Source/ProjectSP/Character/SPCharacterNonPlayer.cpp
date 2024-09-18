@@ -3,9 +3,11 @@
 
 #include "Character/SPCharacterNonPlayer.h"
 #include "Character/SPStatComponent.h"
+#include "Character/SPSkillComponent.h"
 #include "AI/SPAIController.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
+
 ASPCharacterNonPlayer::ASPCharacterNonPlayer()
 {
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
@@ -24,21 +26,55 @@ ASPCharacterNonPlayer::ASPCharacterNonPlayer()
 
 	AIControllerClass = ASPAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-
-	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
-
-	UAISenseConfig_Sight* SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	AIPerception->ConfigureSense(*SightConfig);
-	AIPerception->OnPerceptionUpdated.AddDynamic(this, &ASPCharacterNonPlayer::PerceptionUpdated);
 }
 
 void ASPCharacterNonPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Stat->InitStat(100.f, 5.f, 0.f); //임시로 지정 게임 데이터로 변경 예정
+	Stat->InitStat(100.f, 5.f, 90.f); //임시로 지정 게임 데이터로 변경 예정
 }
 
-void ASPCharacterNonPlayer::PerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+float ASPCharacterNonPlayer::GetPatrolRadius()
 {
+	return 1000.f;
+}
+
+float ASPCharacterNonPlayer::GetAttackDamage()
+{
+	return Stat->GetAttack();
+}
+
+void ASPCharacterNonPlayer::SetAIAttackDelegate(FAICharacterAttackFinished& InOnAttackFinished)
+{
+	if (OnAttackFinished.IsBound() == false)
+	{
+		OnAttackFinished = InOnAttackFinished;
+	}
+}
+
+void ASPCharacterNonPlayer::AttackByAI()
+{
+	bIsAttacking = true;
+	Skill->Attack();
+
+	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AnimInstance->OnMontageEnded.IsBound() == false)
+	{
+		AnimInstance->OnMontageEnded.AddDynamic(this, &ASPCharacterNonPlayer::OnSkillMontageEnded);
+	}
+}
+
+bool ASPCharacterNonPlayer::IsAttacking()
+{
+	return bIsAttacking;
+}
+
+void ASPCharacterNonPlayer::OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (OnAttackFinished.IsBound())
+	{
+		bIsAttacking = false;
+		OnAttackFinished.Execute();
+	}
 }

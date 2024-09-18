@@ -7,6 +7,8 @@
 #include "Interfaces/SPGetStatInterface.h"
 #include "Physics/SPCollision.h"
 #include "Character/SPStatComponent.h"
+#include "Character/SPSkillComponent.h"
+
 // Sets default values
 ASPCharacterBase::ASPCharacterBase()
 {
@@ -35,6 +37,7 @@ ASPCharacterBase::ASPCharacterBase()
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
 	Stat = CreateDefaultSubobject<USPStatComponent>(TEXT("StatComponent"));
+	Skill = CreateDefaultSubobject<USPSkillComponent>(TEXT("SkillComponent"));
 }
 
 float ASPCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -72,3 +75,14 @@ void ASPCharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
+
+bool ASPCharacterBase::IsPlayMontage(UAnimMontage* InMontage)
+{
+	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+
+	if (AnimInstance)
+	{
+		return AnimInstance->Montage_IsPlaying(InMontage);
+	}
+	return false;
+}

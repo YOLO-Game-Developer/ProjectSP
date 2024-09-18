@@ -27,7 +27,7 @@ void USPSkillComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ACharacter *Character = GetPawn<ACharacter>();
+	ASPCharacterPlayer*Character = GetPawn<ASPCharacterPlayer>();
 
 	if (Character)
 	{
@@ -36,13 +36,13 @@ void USPSkillComponent::BeginPlay()
 		SkillDecalActor = GetWorld()->SpawnActor<AActor>(SkillDecalClass, Location, FRotator(0.f,90.f,0.f), Params);
 		SkillDecalActor->SetActorHiddenInGame(true);
 	}
-	
+
 }
 
 void USPSkillComponent::CheckAttackCollision()
 {
 	//Overlap
-	ASPCharacterPlayer* Character = GetPawn<ASPCharacterPlayer>();
+	ASPCharacterBase* Character = GetPawn<ASPCharacterBase>();
 
 	if (Character)
 	{
@@ -55,7 +55,7 @@ void USPSkillComponent::CheckAttackCollision()
 
 		FVector Location = Character->GetActorLocation();
 
-		float Damage = Character->GetStat()->GetAttack();;
+		float Damage = Character->GetStat()->GetAttack();
 		bool Result = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), Location, 100.f, ObjectTypes, nullptr, IgnoreActors, OutActors);
 		if (Result)
 		{
@@ -92,7 +92,7 @@ bool USPSkillComponent::IsHitByAttack(AActor* CurrentActor, AActor* OtherActor)
 
 	// 라디안을 각도로 변환
 	float Angle = FMath::RadiansToDegrees(Radian); //라디안을 Degree로 바꿔주면
-	
+
 	bool IsHit = MinDegree <= Angle && Angle <= MaxDegree;
 
 	return IsHit; //해당 값이 사이에 들어가는지 히트 판정을 수행한다
@@ -101,7 +101,7 @@ bool USPSkillComponent::IsHitByAttack(AActor* CurrentActor, AActor* OtherActor)
 void USPSkillComponent::Attack()
 {
 	//실제 여기서 공격을 수행한다.
-	ASPCharacterPlayer* Character = GetPawn<ASPCharacterPlayer>();
+	ASPCharacterBase* Character = GetPawn<ASPCharacterBase>();
 	if (Character)
 	{
 		if (Character->IsPlayMontage(SkillMontage)) return;
@@ -113,9 +113,16 @@ void USPSkillComponent::Attack()
 			AnimInstance->Montage_Play(SkillMontage, 1.f);
 		}
 
-		CheckAttackCollision();
+		if (SkillDecalActor)
+		{
+			SkillDecalActor->SetActorHiddenInGame(true);
+		}
 	}
-	SkillDecalActor->SetActorHiddenInGame(true);
+
+	MinDegree = -(Character->GetStat()->GetRadiusOfAttack() / 2.f);
+	MaxDegree = (Character->GetStat()->GetRadiusOfAttack() / 2.f);
+
+	CheckAttackCollision();
 }
 
 void USPSkillComponent::DisplayAttackRange()
@@ -132,23 +139,12 @@ void USPSkillComponent::DisplayAttackRange()
 
 		SkillDecalActor->SetActorRotation(Rotation);
 		SkillDecalActor->SetActorLocation(Location);
+
+		SkillDecalActor->SetActorHiddenInGame(false);
 	}
 
-	SkillDecalActor->SetActorHiddenInGame(false);
 	//실제 여기서 데칼을 그린다.
 	//14일엔 Debug Draw를 그릴 예정 -> 그리고, 15일 저녁에 돌아와서 Decal로 대체 
-
-	//ACharacter* Owner = GetPawn<ACharacter>();
-
-	//if (Owner)
-	//{
-	//	FVector Center = Owner->GetActorLocation();
-	//	FVector Direction = Owner->GetActorForwardVector();
-	//	float Radius = 300.f;
-	//	FColor Color = FColor::Red;
-
-	//	DrawDebugCircleArcFanWithDirection(GetWorld(), Center, Direction, Radius, -30.f, 30.0f, 20, FColor::Red, 2.0f,true); 60도
-	//}
 }
 
 void USPSkillComponent::DrawDebugCircleArcFanWithDirection(UWorld* World, FVector Center, FVector Direction, float Radius, float StartAngle, float EndAngle, int32 Segments, FColor Color, float Thickness, bool bPersistentLines, float LifeTime)

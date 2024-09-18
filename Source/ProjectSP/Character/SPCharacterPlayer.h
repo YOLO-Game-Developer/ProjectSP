@@ -21,8 +21,6 @@ public:
 	FORCEINLINE void SetAttack(bool InAttack) { this->bIsAttacking = InAttack; }
 	FORCEINLINE bool GetAttack() { return bIsAttacking; }
 
-	bool IsPlayMontage(class UAnimMontage* InMontage);
-
 protected:
 
 	// Called to bind functionality to input
@@ -36,9 +34,6 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Input", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USPHeroComponent> SPHeroComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USPSkillComponent> Skill;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<class UCameraComponent> Camera;

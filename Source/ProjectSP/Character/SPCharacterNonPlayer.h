@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interfaces/SPAIInterface.h"
 #include "Character/SPCharacterBase.h"
 #include "SPCharacterNonPlayer.generated.h"
 
@@ -10,7 +11,7 @@
  * 
  */
 UCLASS()
-class PROJECTSP_API ASPCharacterNonPlayer : public ASPCharacterBase
+class PROJECTSP_API ASPCharacterNonPlayer : public ASPCharacterBase, public ISPAIInterface
 {
 	GENERATED_BODY()
 	
@@ -20,11 +21,17 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AI)
-	TObjectPtr<class UAIPerceptionComponent> AIPerception;
 
+	virtual float GetPatrolRadius();
+	virtual float GetAttackDamage();
+	virtual void SetAIAttackDelegate(FAICharacterAttackFinished& InOnAttackFinished);
+	virtual void AttackByAI();
+	virtual bool IsAttacking();
 protected:
+	FAICharacterAttackFinished OnAttackFinished;
 
+	uint8 bIsAttacking : 1;
+protected:
 	UFUNCTION()
-	void PerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	void OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 };

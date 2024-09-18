@@ -1,1 +1,2 @@
 #define CPROFILE_SPCAPSULE TEXT("SPCapsule")
+#define CCHANNEL_SPACTION TEXT("SPAction")

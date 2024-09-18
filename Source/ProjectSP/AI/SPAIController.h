@@ -16,7 +16,11 @@ class PROJECTSP_API ASPAIController : public AAIController
 	
 public:
 	ASPAIController();
+	
+	void RunAI();
+	void StopAI();
 
+	virtual void OnPossess(APawn* InPawn) override;
 protected:
 
 	UPROPERTY()
@@ -24,6 +28,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UBehaviorTree> BTAsset;
+
 
 
 };
