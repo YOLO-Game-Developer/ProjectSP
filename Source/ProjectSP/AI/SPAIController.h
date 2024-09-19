@@ -28,7 +28,4 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UBehaviorTree> BTAsset;
-
-
-
 };

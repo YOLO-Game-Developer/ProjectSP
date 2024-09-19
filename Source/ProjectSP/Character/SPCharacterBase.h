@@ -20,7 +20,7 @@ public:
 	virtual class USPStatComponent* GetStat();
 	bool IsPlayMontage(class UAnimMontage* InMontage);
 
-	void Dead();
+	virtual void Dead();
 	FORCEINLINE void SetDead(bool InDead) { this->bIsDead = InDead; }
 	FORCEINLINE bool GetDead() { return bIsDead; }
 protected:
@@ -34,7 +34,7 @@ protected:
 	TObjectPtr<class USPSkillComponent> Skill;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	TObjectPtr<class UAnimMontage> DeathMontage;
 protected:
 

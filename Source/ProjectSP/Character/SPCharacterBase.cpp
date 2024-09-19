@@ -94,7 +94,7 @@ void ASPCharacterBase::Dead()
 	{
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		AnimInstance->Montage_Play(DeathMontage, 1.f);
-		this->SetLifeSpan(3.0f);
+		this->SetLifeSpan(2.0f);
 	}
 
 }

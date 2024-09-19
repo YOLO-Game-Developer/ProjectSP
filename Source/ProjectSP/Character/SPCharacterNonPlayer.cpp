@@ -38,6 +38,20 @@ void ASPCharacterNonPlayer::BeginPlay()
 	Stat->InitStat(100.f, 5.f, 90.f); //임시로 지정 게임 데이터로 변경 예정
 }
 
+void ASPCharacterNonPlayer::InitSpawn(FOnAIDeathCountChanged& InOnAIDeathCountChanged)
+{
+	OnAIDeathCountChanged = InOnAIDeathCountChanged;
+}
+
+void ASPCharacterNonPlayer::Dead()
+{
+	Super::Dead();
+	if (OnAIDeathCountChanged.IsBound())
+	{
+		OnAIDeathCountChanged.Execute();
+	}
+}
+
 float ASPCharacterNonPlayer::GetPatrolRadius()
 {
 	return 1000.f;

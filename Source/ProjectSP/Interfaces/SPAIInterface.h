@@ -7,6 +7,7 @@
 #include "SPAIInterface.generated.h"
 
 // This class does not need to be modified.
+DECLARE_DELEGATE(FOnAIDeathCountChanged)
 DECLARE_DELEGATE(FAICharacterAttackFinished);
 UINTERFACE(MinimalAPI)
 class USPAIInterface : public UInterface
@@ -27,6 +28,7 @@ public:
 	virtual float GetPatrolRadius() = 0;
 	virtual float GetAttackDamage() = 0;
 	virtual void SetAIAttackDelegate(FAICharacterAttackFinished& InOnAttackFinished) = 0;
+	virtual void InitSpawn(FOnAIDeathCountChanged& InOnAIDeathCountChanged) = 0;
 	virtual void AttackByAI() = 0;
 
 

@@ -19,9 +19,11 @@ public:
 	ASPCharacterNonPlayer();
 
 	virtual void BeginPlay() override;
+	virtual void InitSpawn(FOnAIDeathCountChanged& InOnAIDeathCountChanged);
 
 protected:
 
+	virtual void Dead() override;
 	virtual float GetPatrolRadius();
 	virtual float GetAttackDamage();
 	virtual void SetAIAttackDelegate(FAICharacterAttackFinished& InOnAttackFinished);
@@ -29,8 +31,9 @@ protected:
 	virtual bool IsAttacking();
 protected:
 	FAICharacterAttackFinished OnAttackFinished;
-
+	FOnAIDeathCountChanged OnAIDeathCountChanged;
 protected:
 	UFUNCTION()
 	void OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 };
