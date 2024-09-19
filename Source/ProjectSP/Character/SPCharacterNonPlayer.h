@@ -30,7 +30,6 @@ protected:
 protected:
 	FAICharacterAttackFinished OnAttackFinished;
 
-	uint8 bIsAttacking : 1;
 protected:
 	UFUNCTION()
 	void OnSkillMontageEnded(UAnimMontage* Montage, bool bInterrupted);

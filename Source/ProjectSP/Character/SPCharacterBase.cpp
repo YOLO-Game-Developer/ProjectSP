@@ -8,6 +8,7 @@
 #include "Physics/SPCollision.h"
 #include "Character/SPStatComponent.h"
 #include "Character/SPSkillComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASPCharacterBase::ASPCharacterBase()
@@ -52,11 +53,9 @@ float ASPCharacterBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent
 		
 		float HP = TmpStat->GetHP();
 
-		UE_LOG(LogTemp, Log, TEXT("Damage %lf HP %lf"), FinalDamage, HP);
-
 		if (TmpStat->GetHP() <= 0.f)
 		{
-			//Á×À½.
+			Dead();
 			return 0.f;
 		}
 		TmpStat->SetHP(HP - FinalDamage);
@@ -85,4 +84,17 @@ bool ASPCharacterBase::IsPlayMontage(UAnimMontage* InMontage)
 		return AnimInstance->Montage_IsPlaying(InMontage);
 	}
 	return false;
+}
+
+void ASPCharacterBase::Dead()
+{
+	UAnimInstance* AnimInstance = Cast<UAnimInstance>(GetMesh()->GetAnimInstance());
+
+	if (AnimInstance)
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AnimInstance->Montage_Play(DeathMontage, 1.f);
+		this->SetLifeSpan(3.0f);
+	}
+
 }

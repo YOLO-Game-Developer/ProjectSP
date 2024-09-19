@@ -8,6 +8,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
 ASPCharacterNonPlayer::ASPCharacterNonPlayer()
 {
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple'"));
@@ -17,7 +18,7 @@ ASPCharacterNonPlayer::ASPCharacterNonPlayer()
 		GetMesh()->SetSkeletalMesh(SkeletalMeshRef.Object);
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimClassRef(TEXT("/Game/Animation/ABP_SPAnimInstance.ABP_SPAnimInstance_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimClassRef(TEXT("/Game/Animation/ABP_SPZombie.ABP_SPZombie_C"));
 
 	if (AnimClassRef.Class)
 	{
@@ -26,6 +27,8 @@ ASPCharacterNonPlayer::ASPCharacterNonPlayer()
 
 	AIControllerClass = ASPAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
 }
 
 void ASPCharacterNonPlayer::BeginPlay()

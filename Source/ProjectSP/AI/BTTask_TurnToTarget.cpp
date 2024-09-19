@@ -33,12 +33,6 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	//이미 공격 애니메이션이 실행 중일때는 Failed 전달
-	if (AIPawn->IsAttacking())
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	float TurnSpeed = 3.f;
 	FVector LookVector = TargetPawn->GetActorLocation() - ControllingPawn->GetActorLocation();
 	LookVector.Z = 0.0f;

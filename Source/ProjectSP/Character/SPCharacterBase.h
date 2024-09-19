@@ -19,6 +19,10 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual class USPStatComponent* GetStat();
 	bool IsPlayMontage(class UAnimMontage* InMontage);
+
+	void Dead();
+	FORCEINLINE void SetDead(bool InDead) { this->bIsDead = InDead; }
+	FORCEINLINE bool GetDead() { return bIsDead; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,4 +32,13 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stat", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USPSkillComponent> Skill;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	TObjectPtr<class UAnimMontage> DeathMontage;
+protected:
+
+	uint8 bIsAttacking : 1;
+
+	uint8 bIsDead : 1;
 };

@@ -36,7 +36,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
 	TSubclassOf<class AActor> SkillDecalClass;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
 	TObjectPtr<class AActor> SkillDecalActor;
 

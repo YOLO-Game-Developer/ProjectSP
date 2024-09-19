@@ -7,6 +7,7 @@
 #include "DrawDebugHelpers.h"
 #include "AIController.h"
 #include "Physics/SPCollision.h"
+#include "Interfaces/SPAIInterface.h"
 UBTService_Detect::UBTService_Detect()
 {
 	NodeName = TEXT("Detect");
@@ -47,7 +48,13 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	{
 		for (auto const& OverlapResult : OverlapResults)
 		{
+			
 			APawn* Pawn = Cast<APawn>(OverlapResult.GetActor());
+			
+			ISPAIInterface* TargetInterface = Cast<ISPAIInterface>(Pawn);
+			
+			if (TargetInterface) continue; //동지는 체크하지 않음.
+
 			if (Pawn && Pawn->GetController()->IsPlayerController())
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Pawn);

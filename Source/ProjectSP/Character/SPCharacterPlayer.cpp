@@ -14,7 +14,7 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
-ASPCharacterPlayer::ASPCharacterPlayer() : bIsAttacking(false)
+ASPCharacterPlayer::ASPCharacterPlayer()
 {
 	SPHeroComponent = CreateDefaultSubobject<USPHeroComponent>(TEXT("InputComponent"));
 

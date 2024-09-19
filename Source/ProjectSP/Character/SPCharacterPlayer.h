@@ -45,8 +45,5 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player")
 	TObjectPtr<class ASPPlayerController> PC;
 
-protected:
-
-	uint8 bIsAttacking : 1;
 
 };
