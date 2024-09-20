@@ -96,3 +96,16 @@ void ASPCharacterPlayer::DisplayAttackRange()
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	Skill->DisplayAttackRange();
 }
+
+void ASPCharacterPlayer::Dead()
+{
+	Super::Dead();
+
+	
+	PC = GetController<ASPPlayerController>();
+
+	if (PC)
+	{
+		PC->SetUI(true);
+	}
+}

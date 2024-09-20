@@ -10,7 +10,7 @@ public class ProjectSP : ModuleRules
 
         PublicIncludePaths.AddRange(new string[] { "ProjectSP" });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput","AIModule", "NavigationSystem"});
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput","AIModule", "NavigationSystem", "UMG" });
         PrivateDependencyModuleNames.AddRange(new string[] {
             "GameFeatures",
             "GameplayTasks"

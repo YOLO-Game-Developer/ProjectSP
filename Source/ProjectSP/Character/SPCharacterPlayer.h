@@ -20,7 +20,7 @@ public:
 
 	FORCEINLINE void SetAttack(bool InAttack) { this->bIsAttacking = InAttack; }
 	FORCEINLINE bool GetAttack() { return bIsAttacking; }
-
+	virtual void Dead();
 protected:
 
 	// Called to bind functionality to input

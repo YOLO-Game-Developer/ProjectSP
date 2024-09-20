@@ -19,6 +19,17 @@ public:
 
 
 	virtual void BeginPlay() override;
+	void SetUI(bool InVisible);
+
+	virtual void RestartLevel() override;
 protected:
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget)
+	TSubclassOf<class UUserWidget> EndedUIClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget)
+	TObjectPtr<class UUserWidget> EndedUI;
+
+
+	void InitWidget();
 };

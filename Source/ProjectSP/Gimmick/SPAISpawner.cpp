@@ -4,7 +4,7 @@
 #include "Gimmick/SPAISpawner.h"
 #include "Character/SPCharacterNonPlayer.h"
 // Sets default values
-ASPAISpawner::ASPAISpawner() : MaxAICount(5), MinAICount(2), AICount(0)
+ASPAISpawner::ASPAISpawner() : MaxAICount(3), AICount(0)
 {
 	OnAIDeathCountChanged.BindUObject(this, &ASPAISpawner::ReduceAICount);
 }
@@ -14,49 +14,31 @@ void ASPAISpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimer,this, &ASPAISpawner::SpawnAI, 10.f,true);
+	//초반에 3마리 생성
+	//한마리 죽으면 1마리 생성
+	//3마리 죽으면 3마리 생성 
+	SpawnAI();
 }
 
 void ASPAISpawner::SpawnAI()
 {
-	if (AICount > MaxAICount)
+
+	for (int i = 0; i < MaxAICount; i++)
 	{
-		return; //더이상 생성하지 않는다.
+		//AI를 스폰한다
+		ASPCharacterNonPlayer* NonPlayer = GetWorld()->SpawnActor<ASPCharacterNonPlayer>(AIClass, GetActorTransform());
+		NonPlayer->InitSpawn(OnAIDeathCountChanged);
+
+		AICount++;
 	}
 
-	if (AICount < MinAICount)
-	{
-		for (int i = AICount; i <= MinAICount; i++)
-		{
-			//AI를 스폰한다
-			ASPCharacterNonPlayer* NonPlayer = GetWorld()->SpawnActorDeferred<ASPCharacterNonPlayer>(AIClass, GetActorTransform());
-
-			if (NonPlayer)
-			{
-				NonPlayer->FinishSpawning(GetActorTransform());
-				NonPlayer->InitSpawn(OnAIDeathCountChanged);
-			}
-
-			AICount++;
-		}
-
-		UE_LOG(LogTemp, Log, TEXT("Increase Current AI Count %lf"), AICount);
-		return;
-	}
-
-	ASPCharacterNonPlayer* NonPlayer = GetWorld()->SpawnActorDeferred<ASPCharacterNonPlayer>(AIClass, GetActorTransform());
-
-	if (NonPlayer)
-	{
-		NonPlayer->FinishSpawning(GetActorTransform());
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("Increase Current AI Count %lf"), AICount);
-	AICount++;
 }
 
 void ASPAISpawner::ReduceAICount()
 {
 	UE_LOG(LogTemp, Log, TEXT("Reduce Current AI Count %lf"), AICount);
 	AICount--;
+	//죽을 때마다 한마리씩 스폰
+	ASPCharacterNonPlayer* NonPlayer = GetWorld()->SpawnActor<ASPCharacterNonPlayer>(AIClass, GetActorTransform());
+	NonPlayer->InitSpawn(OnAIDeathCountChanged);
 }
